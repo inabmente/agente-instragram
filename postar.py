@@ -520,7 +520,7 @@ def postar_reel_instagram(video_url, legenda):
     url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print("Reel publicado no Instagram!")
-    def main ():
+def main ():
     agora = datetime.now(FUSO)
     dia = agora.weekday()
     turno = 0 if agora.hour < 14 else 1
