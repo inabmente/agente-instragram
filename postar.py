@@ -533,7 +533,7 @@ def main():
 
     print(f"📅 {agora:%d/%m/%Y %H:%M} | Tema: {categoria}")
     print(f"💬 Frase: {frase}")
-arte = montar_arte(gerar_fundo(f"{cena}", cat['estilo']), frase)
+    arte = montar_arte(gerar_fundo(f"{cena}", cat['estilo']), frase)
     os.makedirs("posts", exist_ok=True)
 
     caminho_jpg = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
