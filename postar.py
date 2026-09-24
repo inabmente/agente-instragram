@@ -610,10 +610,10 @@ def postar_reel_instagram(video_url, legenda):
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print("Reel publicado no Instagram!")
     caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
-arte.save(caminho, "JPEG", quality=92)
+    arte.save(caminho, "JPEG", quality=92)
 
 url = enviar_imagem_para_github(caminho)
-postar_instagram(url, montar_legenda
+postar_instagram(url, montar_legenda(frase, categoria))
 caminho_jpg = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
 caminho_mp4 = f"posts/{agora:%Y-%m-%d_%H%M%S}.mp4"
 
