@@ -468,6 +468,58 @@ def postar_instagram(url_imagem, legenda):
 
 
 # ================= PROGRAMA PRINCIPAL =================
+def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
+    """Pega na arte gerada pelo teu script e transforma num Reel MP4 com efeito de zoom"""
+    print(f"🎬 Converter imagem em Reel MP4: {caminho_imagem}")
+    cmd = [
+        "ffmpeg", "-y",
+        "-loop", "1",
+        "-i", caminho_imagem,
+        "-vf", "zoompan=z='min(zoom+0.0015,1.15)':s=1080x1920:d=210:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'",
+        "-c:v", "libx264",
+        "-t", str(duracao),
+        "-pix_fmt", "yuv420p",
+        "-r", "30",
+        caminho_video
+    ]
+    subprocess.run(cmd, check=True)
+    print("✅ Reel MP4 gerado com sucesso!")
+
+
+def postar_reel_instagram(video_url, legenda):
+    """Envia o vídeo MP4 para a API do Instagram como Reel"""
+    print("🚀 A enviar Reel para o Instagram...")
+    url_container = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media"
+    payload = {
+        "media_type": "REELS",
+        "video_url": video_url,
+        "caption": legenda,
+        "access_token": TOKEN
+    }
+    res = requests.post(url_container, data=payload).json()
+    creation_id = res.get("id")
+
+    if not creation_id:
+        print("❌ Erro ao criar container do Reel:", res)
+        return
+
+    print(f"📦 Container criado ID: {creation_id}. A aguardar processamento Meta...")
+
+    url_status = f"https://graph.facebook.com/v19.0/{creation_id}?fields=status_code&access_token={TOKEN}"
+    for _ in range(12):
+        time.sleep(5)
+        status_res = requests.get(url_status).json()
+        status = status_res.get("status_code")
+        print(f"⏳ Status do vídeo: {status}")
+        if status == "FINISHED":
+            break
+        elif status == "ERROR":
+            print("❌ Erro no processamento do vídeo:", status_res)
+            return
+
+    url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
+    pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
+    print("🎉 Reel publicado no Instagram
 def main():
     agora = datetime.now(FUSO)
     dia = agora.weekday()
@@ -489,7 +541,86 @@ def main():
 
     url = enviar_imagem_para_github(caminho)
     postar_instagram(url, montar_legenda(frase, categoria))
+def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
+    """Pega na arte gerada pelo teu script e transforma num Reel MP4 com efeito de zoom"""
+    print(f"🎬 Converter imagem em Reel MP4: {caminho_imagem}")
+    cmd = [
+        "ffmpeg", "-y",
+        "-loop", "1",
+        "-i", caminho_imagem,
+        "-vf", "zoompan=z='min(zoom+0.0015,1.15)':s=1080x1920:d=210:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'",
+        "-c:v", "libx264",
+        "-t", str(duracao),
+        "-pix_fmt", "yuv420p",
+        "-r", "30",
+        caminho_video
+    ]
+    subprocess.run(cmd, check=True)
+    print("✅ Reel MP4 gerado com sucesso!")
 
 
-if __name__ == "__main__":
-    main()
+def postar_reel_instagram(video_url, legenda):
+    """Envia o vídeo MP4 para a API do Instagram como Reel"""
+    print("🚀 A enviar Reel para o Instagram...")
+    url_container = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media"
+    payload = {
+        "media_type": "REELS",
+        "video_url": video_url,
+        "caption": legenda,
+        "access_token": TOKEN
+    }
+    res = requests.post(url_container, data=payload).json()
+    creation_id = res.get("id")
+
+    if not creation_id:
+        print("❌ Erro ao criar container do Reel:", res)
+        return
+
+    print(f"📦 Container criado ID: {creation_id}. A aguardar processamento Meta...")
+
+    url_status = f"https://graph.facebook.com/v19.0/{creation_id}?fields=status_code&access_token={TOKEN}"
+    for _ in range(12):
+        time.sleep(5)
+        status_res = requests.get(url_status).json()
+        status = status_res.get("status_code")
+        print(f"⏳ Status do vídeo: {status}")
+        if status == "FINISHED":
+            break
+        elif status == "ERROR":
+            print("❌ Erro no processamento do vídeo:", status_res)
+            return
+
+    url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
+    pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
+    print("🎉 Reel publicado no Instagram
+    [17:18, 24/09/2026] Roger Santos: caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+arte.save(caminho, "JPEG", quality=92)
+
+url = enviar_imagem_para_github(caminho)
+postar_instagram(url, montar_legenda
+[17:18, 24/09/2026] Roger Santos: caminho_jpg = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+caminho_mp4 = f"posts/{agora:%Y-%m-%d_%H%M%S}.mp4"
+
+# 1. Guarda a imagem gerada pela tua função montar_arte()
+arte.save(caminho_jpg, "JPEG", quality=92)
+
+# 2. Converte a imagem no vídeo MP4 para Reel
+converter_imagem_para_video(caminho_jpg, caminho_mp4, duracao=7)
+
+# 3. Envia o vídeo MP4 para o GitHub
+url_video = enviar_imagem_para_github(caminho_mp4)
+
+# 4. Publica como Reel no Instagram
+postar_reel_instagram(url_video, montar_legenda(frase, categoria))
+[17:19, 24/09/2026] Roger Santos: # === ASSINATURA NO RODAPÉ DO REEL / IMAGEM ===
+    largura, altura = arte.size
+    draw = ImageDraw.Draw(arte)
+
+    # Fonte para a assinatura no rodapé
+    try:
+        fonte_rodape = ImageFont.truetype("DejaVuSans-Bold.ttf", 38)
+    except:
+        fonte_rodape = ImageFont.load_default()
+
+    # Desenha o nome @inabmente centralizado no fundo (rodapé)
+    draw.text((largura // 2, altura - 180), "@inabmente", font=fonte_rodape, fill=(220, 220, 220), anchor="mm")
