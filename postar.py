@@ -628,7 +628,7 @@ url_video = enviar_imagem_para_github(caminho_mp4)
 
 # 4. Publica como Reel no Instagram
 postar_reel_instagram(url_video, montar_legenda(frase, categoria))
-[17:19, 24/09/2026] Roger Santos: # === ASSINATURA NO RODAPÉ DO REEL / IMAGEM ===
+ # === ASSINATURA NO RODAPÉ DO REEL / IMAGEM ===
     largura, altura = arte.size
     draw = ImageDraw.Draw(arte)
 
