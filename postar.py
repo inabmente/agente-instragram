@@ -593,7 +593,7 @@ def postar_reel_instagram(video_url, legenda):
     url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print("Reel publicado no Instagram!")
-    [17:18, 24/09/2026] Roger Santos: caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+     caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
 arte.save(caminho, "JPEG", quality=92)
 
 url = enviar_imagem_para_github(caminho)
