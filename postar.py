@@ -577,7 +577,7 @@ def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
 
 def postar_reel_instagram(video_url, legenda):
     """Envia o vídeo MP4 para a API do Instagram como Reel"""
-    print("🚀 A enviar Reel para o Instagram...")
+    print("A enviar Reel para o Instagram...")
     url_container = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media"
     payload = {
         "media_type": "REELS",
@@ -609,7 +609,7 @@ def postar_reel_instagram(video_url, legenda):
     url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print("Reel publicado no Instagram!")
-     caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+    caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
 arte.save(caminho, "JPEG", quality=92)
 
 url = enviar_imagem_para_github(caminho)
