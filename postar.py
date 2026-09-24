@@ -488,7 +488,7 @@ def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
 
 def postar_reel_instagram(video_url, legenda):
     """Envia o vídeo MP4 para a API do Instagram como Reel"""
-    print("🚀 A enviar Reel para o Instagram...")
+    print("A enviar Reel para o Instagram...")
     url_container = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media"
     payload = {
         "media_type": "REELS",
@@ -614,7 +614,7 @@ arte.save(caminho, "JPEG", quality=92)
 
 url = enviar_imagem_para_github(caminho)
 postar_instagram(url, montar_legenda
-[17:18, 24/09/2026] Roger Santos: caminho_jpg = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+caminho_jpg = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
 caminho_mp4 = f"posts/{agora:%Y-%m-%d_%H%M%S}.mp4"
 
 # 1. Guarda a imagem gerada pela tua função montar_arte()
