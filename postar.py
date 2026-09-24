@@ -520,7 +520,7 @@ def postar_reel_instagram(video_url, legenda):
     url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print(" Reel publicado no Instagram!")
-def main():
+    def main():
     agora = datetime.now(FUSO)
     dia = agora.weekday()
     turno = 0 if agora.hour < 14 else 1
@@ -533,6 +533,7 @@ def main():
 
     print(f"📅 {agora:%d/%m/%Y %H:%M} | Tema: {categoria}")
     print(f"💬 Frase: {frase}")
+
     arte = montar_arte(gerar_fundo(f"{cena}", cat['estilo']), frase)
     os.makedirs("posts", exist_ok=True)
 
@@ -542,7 +543,7 @@ def main():
     # 1. Guarda a imagem gerada
     arte.save(caminho_jpg, "JPEG", quality=92)
 
-    # 2. Converte a imagem para vídeo MP4 de Reel
+    # 2. Converte para vídeo Reel MP4
     converter_imagem_para_video(caminho_jpg, caminho_mp4, duracao=7)
 
     # 3. Envia o vídeo para o GitHub
@@ -554,6 +555,7 @@ def main():
 
 if _name_ == "_main_":
     main()
+
    
 def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
     """Pega na arte gerada pelo teu script e transforma num Reel MP4 com efeito de zoom"""
