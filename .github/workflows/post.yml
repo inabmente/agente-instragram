@@ -1,0 +1,33 @@
+name: Post Instagram
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: 'manha ou tarde'
+        default: 'manha'
+
+jobs:
+  postar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Publicar
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: |
+          if [ "${{ github.event.schedule }}" = "0 21 * * *" ]; then
+            python postar.py tarde
+          elif [ "${{ github.event.schedule }}" = "0 12 * * *" ]; then
+            python postar.py manha
+          else
+            python postar.py ${{ github.event.inputs.slot }}
+          fi
