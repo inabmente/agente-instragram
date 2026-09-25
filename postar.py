@@ -489,7 +489,7 @@ def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
 def postar_reel_instagram(video_url, legenda):
     """Envia o vídeo MP4 para a API do Instagram como Reel"""
     print("A enviar Reel para o Instagram...")
-    url_container = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media"
+  url_container = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media"
     payload = {
         "media_type": "REELS",
         "video_url": video_url,
@@ -505,7 +505,7 @@ def postar_reel_instagram(video_url, legenda):
 
     print(f"📦 Container criado ID: {creation_id}. A aguardar processamento Meta...")
 
-    url_status = f"https://graph.facebook.com/v19.0/{creation_id}?fields=status_code&access_token={TOKEN}"
+    url_status = f"https://graph.instagram.com/v24.0/{creation_id}?fields=status_code&access_token={TOKEN}"
     for _ in range(12):
         time.sleep(5)
         status_res = requests.get(url_status).json()
@@ -517,7 +517,7 @@ def postar_reel_instagram(video_url, legenda):
             print("❌ Erro no processamento do vídeo:", status_res)
             return
 
-    url_publish = f"https://graph.facebook.com/v19.0/{IG_USER_ID}/media_publish"
+    url_publish = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media_publish"
     pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
     print("Reel publicado no Instagram!")
 def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
