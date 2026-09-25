@@ -488,8 +488,8 @@ def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
 
 def postar_reel_instagram(video_url, legenda):
     """Envia o vídeo MP4 para a API do Instagram como Reel"""
-    print("A enviar Reel para o Instagram...")
-  url_container = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media"
+    print("A enviar Reel para o Instagram..."
+    url_container = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media"
     payload = {
         "media_type": "REELS",
         "video_url": video_url,
