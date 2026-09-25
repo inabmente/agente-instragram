@@ -467,114 +467,28 @@ def postar_instagram(url_imagem, legenda):
     print("✅ POST PUBLICADO NO INSTAGRAM! ID:", r["id"])
 
 
-# ================= PROGRAMA PRINCIPAL =================
-def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
-    """Pega na arte gerada pelo teu script e transforma num Reel MP4 com efeito de zoom"""
-    print(f"🎬 Converter imagem em Reel MP4: {caminho_imagem}")
-    cmd = [
-        "ffmpeg", "-y",
-        "-loop", "1",
-        "-i", caminho_imagem,
-        "-vf", "zoompan=z='min(zoom+0.0015,1.15)':s=1080x1920:d=210:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'",
-        "-c:v", "libx264",
-        "-t", str(duracao),
-        "-pix_fmt", "yuv420p",
-        "-r", "30",
-        caminho_video
-    ]
-    subprocess.run(cmd, check=True)
-    print("✅ Reel MP4 gerado com sucesso!")
-
-
-def postar_reel_instagram(video_url, legenda):
-    """Envia o vídeo MP4 para a API do Instagram como Reel"""
-    print("A enviar Reel para o Instagram..."
-    url_container = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media"
-    payload = {
-        "media_type": "REELS",
-        "video_url": video_url,
-        "caption": legenda,
-        "access_token": TOKEN
-    }
-    res = requests.post(url_container, data=payload).json()
-    creation_id = res.get("id")
-
-    if not creation_id:
-        print("❌ Erro ao criar container do Reel:", res)
-        return
-
-    print(f"📦 Container criado ID: {creation_id}. A aguardar processamento Meta...")
-
-    url_status = f"https://graph.instagram.com/v24.0/{creation_id}?fields=status_code&access_token={TOKEN}"
-    for _ in range(12):
-        time.sleep(5)
-        status_res = requests.get(url_status).json()
-        status = status_res.get("status_code")
-        print(f"⏳ Status do vídeo: {status}")
-        if status == "FINISHED":
-            break
-        elif status == "ERROR":
-            print("❌ Erro no processamento do vídeo:", status_res)
-            return
-
-    url_publish = f"https://graph.instagram.com/v24.0/{IG_USER_ID}/media_publish"
-    pub_res = requests.post(url_publish, data={"creation_id": creation_id, "access_token": TOKEN}).json()
-    print("Reel publicado no Instagram!")
-def converter_imagem_para_video(caminho_imagem, caminho_video, duracao=7):
-    import subprocess
-
-    comando = [
-        "ffmpeg", "-y",
-        "-loop", "1", "-framerate", "30",
-        "-i", caminho_imagem,
-        "-t", str(duracao),
-        "-vf", "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2,format=yuv420p",
-        "-c:v", "libx264",
-        "-r", "30",
-        "-movflags", "+faststart",
-        caminho_video,
-    ]
-    subprocess.run(comando, check=True)
-
-
+    # =============== PROGRAMA PRINCIPAL ===============
 def main():
-    import sys
-
-    if len(sys.argv) != 2 or sys.argv[1] not in ("manha", "tarde"):
-        raise SystemExit("Informe manha ou tarde. Nada foi publicado.")
-
-    slot = sys.argv[1]
     agora = datetime.now(FUSO)
     dia = agora.weekday()
-    turno = 0 if slot == "manha" else 1
-
+    turno = 0 if agora.hour < 14 else 1
     categoria = CALENDARIO[dia][turno]
     cat = CATEGORIAS[categoria]
+
     n = contador(categoria, dia, turno, agora)
     frase = item_da_vez(cat["frases"], categoria + "-frases", n)
     cena = item_da_vez(cat["cenas"], categoria + "-cenas", n)
 
-    arte = montar_arte(gerar_fundo(cena, cat["estilo"]), frase)
-    legenda = montar_legenda(frase, categoria)
+    print(f"📅 {agora:%d/%m/%Y %H:%M} | Tema: {categoria}")
+    print(f"💬 Frase: {frase}")
+
+    arte = montar_arte(gerar_fundo(f"{cena}, {cat['estilo']}"), frase)
     os.makedirs("posts", exist_ok=True)
+    caminho = f"posts/{agora:%Y-%m-%d_%H%M%S}.jpg"
+    arte.save(caminho, "JPEG", quality=92)
 
-    nome = f"posts/{agora:%Y-%m-%d_%H%M%S}_{slot}"
-    caminho_jpg = nome + ".jpg"
-    arte.save(caminho_jpg, "JPEG", quality=92)
-
-    if slot == "manha":
-        url_imagem = enviar_imagem_para_github(caminho_jpg)
-        if not url_imagem:
-            raise RuntimeError("Não consegui obter o link da foto.")
-        postar_instagram(url_imagem, legenda)
-    else:
-        caminho_mp4 = nome + ".mp4"
-        converter_imagem_para_video(caminho_jpg, caminho_mp4)
-        url_video = enviar_imagem_para_github(caminho_mp4)
-        if not url_video:
-            raise RuntimeError("Não consegui obter o link do vídeo.")
-        postar_reel_instagram(url_video, legenda)
-
+    url = enviar_imagem_para_github(caminho)
+    postar_instagram(url, montar_legenda(frase, categoria))
 
 if __name__ == "__main__":
     main()
